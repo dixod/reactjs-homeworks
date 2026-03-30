@@ -1,0 +1,240 @@
+.page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 24px 28px 80px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.brand {
+  justify-self: start;
+  display: flex;
+  align-items: center;
+  background: transparent;
+  padding: 0;
+}
+
+.brand-icon {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+  display: block;
+}
+
+.brand-text {
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.nav {
+  margin-left: auto;
+  margin-right: 40px;
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  color: #6b6b6b;
+  font-weight: 500;
+}
+
+.nav-link:hover {
+  color: #1f1f1f;
+}
+
+.cart-btn {
+  justify-self: end;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: #3dd6d0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cart-icon {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: #ffffff;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.hero {
+  margin-top: 56px;
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  align-items: center;
+  gap: 40px;
+}
+
+.hero-text {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.hero-title {
+  font-size: 48px;
+  line-height: 1.1;
+  font-weight: 600;
+  color: #1f1f1f;
+}
+
+.hero-desc {
+  font-size: 15px;
+  line-height: 1.6;
+  color: #6b6b6b;
+  max-width: 420px;
+}
+
+.primary-btn {
+  width: fit-content;
+  background: #3dd6d0;
+  color: #0f2a2a;
+  font-weight: 600;
+  padding: 12px 20px;
+  border-radius: 8px;
+}
+
+.rating {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 13px;
+}
+
+.rating-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.rating-title {
+  color: #1f1f1f;
+  font-weight: 600;
+}
+
+.rating-score {
+  color: #3dd6d0;
+  font-weight: 600;
+}
+
+.rating-text {
+  color: #6b6b6b;
+}
+
+.hero-image {
+  width: 100%;
+  max-width: 360px;
+  height: auto;
+  border-radius: 0;
+  display: block;
+}
+
+.footer {
+  margin-top: 80px;
+  display: grid;
+  grid-template-columns: 1.3fr 1fr 1fr 1fr;
+  gap: 40px;
+  color: #6b6b6b;
+  font-size: 14px;
+}
+
+.footer-col {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.footer-logo {
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+  display: block;
+}
+
+.footer-text {
+  max-width: 220px;
+  line-height: 1.5;
+}
+
+.footer-title {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #1f1f1f;
+}
+
+.footer a:hover {
+  color: #1f1f1f;
+}
+
+.brand-icon {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  display: block;
+}
+
+.hero-image {
+  width: 100%;
+  max-width: 380px;
+  height: auto;
+  border-radius: 26px;
+  display: block;
+  justify-self: center;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.12);
+}
+
+.tooltip {
+  position: relative;
+  color: #3dd6d0;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.tooltip-image {
+  position: absolute;
+  left: 50%;
+  bottom: 140%;
+  transform: translateX(-50%);
+  width: 140px;
+  height: auto;
+  padding: 6px;
+  background: white;
+  border-radius: 6px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+  z-index: 5;
+}
+
+.tooltip:hover .tooltip-image {
+  opacity: 1;
+  visibility: visible;
+}
+
+.hero-card {
+  justify-self: center;
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.star {
+  color: #3dd6d0;
+  font-size: 14px;
+}
+
+.accent {
+  color: #3dd6d0;
+}
