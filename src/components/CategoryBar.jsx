@@ -1,14 +1,14 @@
 const CATEGORIES = ['Dessert', 'Dinner', 'Breakfast'];
 
-export default function CategoryBar() {
+export default function CategoryBar({ selectedCategory, onCategoryChange }) {
   return (
     <div className="categories">
-      {CATEGORIES.map((category, index) => (
+      {CATEGORIES.map((category) => (
         <button
           key={category}
           type="button"
-          className={`category-btn ${index === 0 ? 'category-btn--active' : ''}`.trim()}
-          disabled
+          className={`category-btn ${selectedCategory === category ? 'category-btn--active' : ''}`.trim()}
+          onClick={() => onCategoryChange(category)}
         >
           {category}
         </button>

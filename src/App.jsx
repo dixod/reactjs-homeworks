@@ -16,6 +16,7 @@ export default function App() {
   const [cartCount, setCartCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState(null);
 
   useEffect(() => {
     let active = true;
@@ -45,8 +46,13 @@ export default function App() {
     };
   }, []);
 
-  const visibleMeals = useMemo(() => meals.slice(0, visibleCount), [meals, visibleCount]);
-  const hasMoreMeals = visibleCount < meals.length;
+  const filteredMeals = useMemo(() => {
+    if (!selectedCategory) return meals;
+    return meals.filter((meal) => meal.category === selectedCategory);
+  }, [meals, selectedCategory]);
+
+  const visibleMeals = useMemo(() => filteredMeals.slice(0, visibleCount), [filteredMeals, visibleCount]);
+  const hasMoreMeals = visibleCount < filteredMeals.length;
 
   const handleSeeMore = () => {
     setVisibleCount((prev) => prev + STEP);
@@ -54,6 +60,11 @@ export default function App() {
 
   const handleAddToCart = () => {
     setCartCount((prev) => prev + 1);
+  };
+
+  const handleCategoryChange = (category) => {
+    setSelectedCategory(category === selectedCategory ? null : category);
+    setVisibleCount(STEP);
   };
 
   return (
@@ -67,7 +78,7 @@ export default function App() {
             Use our menu to place an order online, or <span className="menu-accent">phone</span> our store
             to place a pickup order. Fast and <span className="menu-accent">fresh food.</span>
           </p>
-          <CategoryBar />
+          <CategoryBar selectedCategory={selectedCategory} onCategoryChange={handleCategoryChange} />
         </section>
 
         {loading && <p className="status">Loading menu...</p>}
