@@ -1,9 +1,7 @@
 {
-  "name": "reactjs-homeworks-hw1",
+  "name": "hw2",
   "private": true,
   "version": "0.0.0",
-  "description": "Homework 1",
-  "author": "Aliaksei Bykau",
   "type": "module",
   "scripts": {
     "dev": "vite",
