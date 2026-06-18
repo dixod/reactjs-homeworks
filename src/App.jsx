@@ -1,96 +1,98 @@
-import './App.css'
-import logoImg from "./assets/Logo.png";
-import foodImg from "./assets/food.png";
-import phoneImg from "./assets/img.png";
+import { useEffect, useMemo, useState } from 'react';
+import './App.css';
+import { getMeals } from './api/mealsApi';
+import { getOrders } from './api/ordersApi';
+import Header from './components/Header';
+import CategoryBar from './components/CategoryBar';
+import MealCard from './components/MealCard';
+import Footer from './components/Footer';
+
+const STEP = 6;
 
 export default function App() {
-  return(
-    <div className='page'>
-        <header className="header">
-          <div className="brand">
-            <img className="brand-icon" src={logoImg} alt="Logo" />
-          </div>
-          
-          <nav className="nav">
-            <a className="nav-link" href="#">Home</a>
-            <a className="nav-link" href="#">Menu</a>
-            <a className="nav-link" href="#">Company</a>
-            <a className="nav-link" href="#">Login</a>
-          </nav>
+  const [meals, setMeals] = useState([]);
+  const [orders, setOrders] = useState([]);
+  const [visibleCount, setVisibleCount] = useState(STEP);
+  const [cartCount, setCartCount] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
-          <button className="cart-btn" type="button" aria-label="Cart">
-            <svg className="cart-icon" viewBox="0 0 24 24" aria-hidden="true">
-              <circle cx="9" cy="20" r="1.6" />
-              <circle cx="18" cy="20" r="1.6" />
-              <path d="M2 3h3l2.3 11.4a2 2 0 0 0 2 1.6h8.9a2 2 0 0 0 1.9-1.4L22 7H6" />
-            </svg>
-          </button>
-        </header>
+  useEffect(() => {
+    let active = true;
 
-      <main className="hero">
-        <div className="hero-text">
-          <h1 className="hero-title">
-            Beautiful food & takeaway, <span className="accent">delivered</span> to your door.
-          </h1>
-          <p className="hero-desc">
-            Lorem Ipsum is simply dummy text of the printing and typesetting
-            industry. Lorem Ipsum has been the industry’s standard dummy text
-            ever since the 1500. Prefer to order by{' '}
-            <span className="tooltip">
-              phone
-              <img className="tooltip-image" src={phoneImg} alt="Phone number" />
-            </span>
-            .
+    async function loadData() {
+      try {
+        setLoading(true);
+        setError('');
+
+        const [mealsData, ordersData] = await Promise.all([getMeals(), getOrders()]);
+
+        if (!active) return;
+        setMeals(mealsData);
+        setOrders(ordersData);
+      } catch (loadError) {
+        if (!active) return;
+        setError(loadError instanceof Error ? loadError.message : 'Failed to load data');
+      } finally {
+        if (active) setLoading(false);
+      }
+    }
+
+    loadData();
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const visibleMeals = useMemo(() => meals.slice(0, visibleCount), [meals, visibleCount]);
+  const hasMoreMeals = visibleCount < meals.length;
+
+  const handleSeeMore = () => {
+    setVisibleCount((prev) => prev + STEP);
+  };
+
+  const handleAddToCart = () => {
+    setCartCount((prev) => prev + 1);
+  };
+
+  return (
+    <div className="page">
+      <Header cartCount={cartCount} ordersCount={orders.length} />
+
+      <main className="main">
+        <section className="menu-head">
+          <h1 className="menu-title">Browse our menu</h1>
+          <p className="menu-subtitle">
+            Use our menu to place an order online, or <span className="menu-accent">phone</span> our store
+            to place a pickup order. Fast and <span className="menu-accent">fresh food.</span>
           </p>
-          <button className="primary-btn" type="button">Place an Order</button>
-          <div className="rating">
-            <div className="rating-line">
-              <span className="star">★</span>
-              <span className="rating-title">Trustpilot</span>
-            </div>
-            <div className="rating-line">
-              <span className="rating-score">4.8 out of 5</span>
-              <span className="rating-text">based on 2000+ reviews</span>
-            </div>
-          </div>
-        </div>
+          <CategoryBar />
+        </section>
 
-        <div className="hero-card">
-          <img className="hero-image" src={foodImg} alt="Food" />
-        </div>
+        {loading && <p className="status">Loading menu...</p>}
+        {!loading && error && <p className="status status--error">{error}</p>}
 
+        {!loading && !error && (
+          <>
+            <section className="meals-grid">
+              {visibleMeals.map((meal) => (
+                <MealCard key={meal.id} meal={meal} onAddToCart={handleAddToCart} />
+              ))}
+            </section>
+
+            {hasMoreMeals && (
+              <div className="see-more-wrap">
+                <button type="button" className="see-more-btn" onClick={handleSeeMore}>
+                  See more
+                </button>
+              </div>
+            )}
+          </>
+        )}
       </main>
 
-      <footer className="footer">
-        <div className="footer-col">
-          <img className="footer-logo" src={logoImg} alt="Logo" />
-          <p className="footer-text">
-            Takeaway & Delivery template for mass, medium businesses.
-          </p>
-        </div>
-
-        <div className="footer-col">
-          <h4 className="footer-title">Company</h4>
-          <a href="#">Home</a>
-          <a href="#">Order</a>
-          <a href="#">FAQ</a>
-          <a href="#">Contact</a>
-        </div>
-
-        <div className="footer-col">
-          <h4 className="footer-title">Template</h4>
-          <a href="#">Style Guide</a>
-          <a href="#">Changelog</a>
-          <a href="#">License</a>
-          <a href="#">Webflow University</a>
-        </div>
-
-        <div className="footer-col">
-          <h4 className="footer-title">Flowbase</h4>
-          <a href="#">More Clonables</a>
-        </div>
-      </footer>
-
+      <Footer />
     </div>
   );
 }
