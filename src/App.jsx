@@ -6,6 +6,7 @@ import Header from './components/Header';
 import CategoryBar from './components/CategoryBar';
 import MealCard from './components/MealCard';
 import Footer from './components/Footer';
+import { useFetch } from './hooks/useFetch';
 
 const STEP = 6;
 
@@ -17,6 +18,7 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [selectedCategory, setSelectedCategory] = useState(null);
+  const { request } = useFetch();
 
   useEffect(() => {
     let active = true;
@@ -26,7 +28,7 @@ export default function App() {
         setLoading(true);
         setError('');
 
-        const [mealsData, ordersData] = await Promise.all([getMeals(), getOrders()]);
+        const [mealsData, ordersData] = await Promise.all([getMeals(request), getOrders(request)]);
 
         if (!active) return;
         setMeals(mealsData);
@@ -44,7 +46,7 @@ export default function App() {
     return () => {
       active = false;
     };
-  }, []);
+  }, [request]);
 
   const filteredMeals = useMemo(() => {
     if (!selectedCategory) return meals;
