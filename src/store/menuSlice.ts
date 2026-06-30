@@ -1,71 +1,65 @@
 import { createAsyncThunk, createSlice, type PayloadAction } from '@reduxjs/toolkit';
 import { getMeals } from '../api/mealsApi';
-import { getOrders } from '../api/ordersApi';
-import type { FetchRequest, Meal, Order } from '../types';
+import type { Meal } from '../types';
 
 const STEP = 6;
 
-export const fetchMenu = createAsyncThunk<{ meals: Meal[]; orders: Order[] }, FetchRequest>(
-  'menu/fetchMenu',
-  async (request) => {
-  const [meals, orders] = await Promise.all([getMeals(request), getOrders(request)]);
-
-  return { meals, orders };
-  },
-);
-
 type MenuState = {
   meals: Meal[];
-  orders: Order[];
-  visibleCount: number;
-  cartCount: number;
   loading: boolean;
   error: string;
   selectedCategory: string | null;
+  visibleCount: number;
 };
 
 const initialState: MenuState = {
   meals: [],
-  orders: [],
-  visibleCount: STEP,
-  cartCount: 0,
   loading: false,
   error: '',
   selectedCategory: null,
+  visibleCount: STEP,
 };
+
+export const fetchMeals = createAsyncThunk<Meal[], void, { rejectValue: string }>(
+  'menu/fetchMeals',
+  async (_, { rejectWithValue }) => {
+    try {
+      return await getMeals();
+    } catch (error) {
+      return rejectWithValue(error instanceof Error ? error.message : 'Failed to load meals');
+    }
+  },
+);
 
 const menuSlice = createSlice({
   name: 'menu',
   initialState,
   reducers: {
-    addToCart(state) {
-      state.cartCount += 1;
-    },
-    selectCategory(state, action: PayloadAction<string>) {
-      state.selectedCategory = action.payload === state.selectedCategory ? null : action.payload;
+    selectCategory: (state, action: PayloadAction<string>) => {
+      state.selectedCategory = state.selectedCategory === action.payload ? null : action.payload;
       state.visibleCount = STEP;
     },
-    showMore(state) {
+    showMore: (state) => {
       state.visibleCount += STEP;
     },
   },
   extraReducers: (builder) => {
     builder
-      .addCase(fetchMenu.pending, (state) => {
+      .addCase(fetchMeals.pending, (state) => {
         state.loading = true;
         state.error = '';
       })
-      .addCase(fetchMenu.fulfilled, (state, action) => {
+      .addCase(fetchMeals.fulfilled, (state, action) => {
         state.loading = false;
-        state.meals = action.payload.meals;
-        state.orders = action.payload.orders;
+        state.meals = action.payload;
       })
-      .addCase(fetchMenu.rejected, (state, action) => {
+      .addCase(fetchMeals.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || 'Failed to load data';
+        state.error = action.payload ?? action.error.message ?? 'Failed to load meals';
       });
   },
 });
 
-export const { addToCart, selectCategory, showMore } = menuSlice.actions;
+export const { selectCategory, showMore } = menuSlice.actions;
+
 export default menuSlice.reducer;
