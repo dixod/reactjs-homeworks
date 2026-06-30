@@ -1,12 +1,15 @@
 import { useState } from 'react';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { auth } from '../firebase';
+import { setUser } from '../store/authSlice';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const handleLogin = async (event) => {
@@ -19,7 +22,8 @@ export default function LoginPage() {
     }
 
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      dispatch(setUser({ email: userCredential.user.email, uid: userCredential.user.uid }));
       navigate('/');
     } catch (authError) {
       setError(authError.message);
@@ -35,7 +39,8 @@ export default function LoginPage() {
     }
 
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      dispatch(setUser({ email: userCredential.user.email, uid: userCredential.user.uid }));
       navigate('/');
     } catch (authError) {
       setError(authError.message);

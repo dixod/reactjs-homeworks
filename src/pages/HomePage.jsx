@@ -1,51 +1,26 @@
-import { useEffect, useMemo, useState } from 'react';
-import { getMeals } from '../api/mealsApi';
-import { getOrders } from '../api/ordersApi';
+import { useEffect, useMemo } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import CategoryBar from '../components/CategoryBar';
 import Footer from '../components/Footer';
 import Header from '../components/Header';
 import MealCard from '../components/MealCard';
 import { useFetch } from '../hooks/useFetch';
-
-const STEP = 6;
+import { addToCart, fetchMenu, selectCategory, showMore } from '../store/menuSlice';
 
 export default function HomePage() {
-  const [meals, setMeals] = useState([]);
-  const [orders, setOrders] = useState([]);
-  const [visibleCount, setVisibleCount] = useState(STEP);
-  const [cartCount, setCartCount] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState(null);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { request } = useFetch();
+  const { meals, orders, visibleCount, cartCount, loading, error, selectedCategory } = useSelector(
+    (state) => state.menu,
+  );
 
   useEffect(() => {
-    let active = true;
-
-    async function loadData() {
-      try {
-        setLoading(true);
-        setError('');
-
-        const [mealsData, ordersData] = await Promise.all([getMeals(request), getOrders(request)]);
-
-        if (!active) return;
-        setMeals(mealsData);
-        setOrders(ordersData);
-      } catch (loadError) {
-        if (!active) return;
-        setError(loadError instanceof Error ? loadError.message : 'Failed to load data');
-      } finally {
-        if (active) setLoading(false);
-      }
+    if (!meals.length && !loading && !error) {
+      dispatch(fetchMenu(request));
     }
-
-    loadData();
-
-    return () => {
-      active = false;
-    };
-  }, [request]);
+  }, [dispatch, error, loading, meals.length, request]);
 
   const filteredMeals = useMemo(() => {
     if (!selectedCategory) return meals;
@@ -56,16 +31,19 @@ export default function HomePage() {
   const hasMoreMeals = visibleCount < filteredMeals.length;
 
   const handleSeeMore = () => {
-    setVisibleCount((prev) => prev + STEP);
+    dispatch(showMore());
   };
 
   const handleAddToCart = () => {
-    setCartCount((prev) => prev + 1);
+    dispatch(addToCart());
   };
 
   const handleCategoryChange = (category) => {
-    setSelectedCategory(category === selectedCategory ? null : category);
-    setVisibleCount(STEP);
+    dispatch(selectCategory(category));
+  };
+
+  const handlePlaceOrder = () => {
+    navigate('/order');
   };
 
   return (
@@ -79,6 +57,9 @@ export default function HomePage() {
             Use our menu to place an order online, or <span className="menu-accent">phone</span> our store
             to place a pickup order. Fast and <span className="menu-accent">fresh food.</span>
           </p>
+          <button type="button" className="primary-btn menu-order-btn" onClick={handlePlaceOrder}>
+            Place order
+          </button>
           <CategoryBar selectedCategory={selectedCategory} onCategoryChange={handleCategoryChange} />
         </section>
 

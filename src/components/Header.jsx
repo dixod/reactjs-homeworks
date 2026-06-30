@@ -1,7 +1,23 @@
 import { Link, NavLink } from 'react-router-dom';
+import { signOut } from 'firebase/auth';
+import { useDispatch, useSelector } from 'react-redux';
 import logo from '../assets/Logo.svg';
+import { auth } from '../firebase';
+import { clearUser } from '../store/authSlice';
 
 export default function Header({ cartCount, ordersCount }) {
+  const dispatch = useDispatch();
+  const user = useSelector((state) => state.auth.user);
+  const userName = user?.email?.split('@')[0];
+
+  const handleLogout = async () => {
+    if (auth) {
+      await signOut(auth);
+    }
+
+    dispatch(clearUser());
+  };
+
   return (
     <header className="header">
       <Link className="brand" to="/">
@@ -18,9 +34,18 @@ export default function Header({ cartCount, ordersCount }) {
         <NavLink className="nav-item" to="/">
           Company
         </NavLink>
-        <NavLink className="nav-item" to="/login">
-          Login
-        </NavLink>
+        {user ? (
+          <>
+            <span className="nav-item">{userName}</span>
+            <button className="login-switch" type="button" onClick={handleLogout}>
+              Logout
+            </button>
+          </>
+        ) : (
+          <NavLink className="nav-item" to="/login">
+            Login
+          </NavLink>
+        )}
       </nav>
 
       <Link
