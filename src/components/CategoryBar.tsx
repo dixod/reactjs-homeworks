@@ -1,6 +1,11 @@
 const CATEGORIES = ['Dessert', 'Dinner', 'Breakfast'];
 
-export default function CategoryBar({ selectedCategory, onCategoryChange }) {
+type CategoryBarProps = {
+  selectedCategory: string | null;
+  onCategoryChange: (category: string) => void;
+};
+
+export default function CategoryBar({ selectedCategory, onCategoryChange }: CategoryBarProps) {
   return (
     <div className="categories">
       {CATEGORIES.map((category) => (

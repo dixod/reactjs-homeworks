@@ -1,4 +1,11 @@
-export default function MealCard({ meal, onAddToCart }) {
+import type { Meal } from '../types';
+
+type MealCardProps = {
+  meal: Meal;
+  onAddToCart: () => void;
+};
+
+export default function MealCard({ meal, onAddToCart }: MealCardProps) {
   const parsedPrice = Number(meal.price);
   const price = Number.isFinite(parsedPrice) ? parsedPrice.toFixed(2) : meal.price;
   const normalizedText = typeof meal.instructions === 'string' ? meal.instructions.replace(/\s+/g, ' ').trim() : '';

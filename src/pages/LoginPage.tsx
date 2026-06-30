@@ -1,18 +1,18 @@
-import { useState } from 'react';
+import { useState, type FormEvent } from 'react';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
-import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { auth } from '../firebase';
+import { useAppDispatch } from '../store/hooks';
 import { setUser } from '../store/authSlice';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  const handleLogin = async (event) => {
+  const handleLogin = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError('');
 
@@ -26,7 +26,7 @@ export default function LoginPage() {
       dispatch(setUser({ email: userCredential.user.email, uid: userCredential.user.uid }));
       navigate('/');
     } catch (authError) {
-      setError(authError.message);
+      setError(authError instanceof Error ? authError.message : 'Failed to log in.');
     }
   };
 
@@ -43,7 +43,7 @@ export default function LoginPage() {
       dispatch(setUser({ email: userCredential.user.email, uid: userCredential.user.uid }));
       navigate('/');
     } catch (authError) {
-      setError(authError.message);
+      setError(authError instanceof Error ? authError.message : 'Failed to register.');
     }
   };
 

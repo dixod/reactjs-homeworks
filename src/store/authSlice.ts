@@ -1,6 +1,12 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
+import type { AppUser } from '../types';
 
-const initialState = {
+type AuthState = {
+  user: AppUser | null;
+  loading: boolean;
+};
+
+const initialState: AuthState = {
   user: null,
   loading: true,
 };
@@ -9,7 +15,7 @@ const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    setUser(state, action) {
+    setUser(state, action: PayloadAction<AppUser>) {
       state.user = action.payload;
       state.loading = false;
     },

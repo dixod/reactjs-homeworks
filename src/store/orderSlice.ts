@@ -1,6 +1,10 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-const initialState = {
+type OrderState = {
+  submitted: boolean;
+};
+
+const initialState: OrderState = {
   submitted: false,
 };
 
