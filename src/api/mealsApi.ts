@@ -1,13 +1,13 @@
-import type { FetchRequest, Meal } from '../types';
+import type { Meal } from '../types';
 
-const MEALS = 'https://65de35f3dccfcd562f5691bb.mockapi.io/api/v1/meals';
+const MEALS_URL = 'https://65de35f3dccfcd562f5691bb.mockapi.io/api/v1/meals';
 
-export async function getMeals(request: FetchRequest = fetch): Promise<Meal[]> {
-  const response = await request(MEALS);
+export async function getMeals(): Promise<Meal[]> {
+  const response = await fetch(MEALS_URL);
 
   if (!response.ok) {
     throw new Error(`Failed to load meals (${response.status})`);
   }
 
-  return response.json() as Promise<Meal[]>;
+  return response.json();
 }

@@ -1,43 +1,46 @@
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap");
+
 * {
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 :root {
-  --color-bg: #edf3f5;
+  font-family: "Manrope", sans-serif;
+  color: var(--color-text);
+  background-color: var(--color-bg);
+
+  --color-bg: #f7fbfc;
   --color-surface: #ffffff;
-  --color-surface-muted: #fbfbfb;
-  --color-text: #1f2937;
-  --color-heading: #111827;
-  --color-muted: #546285;
-  --color-border: #d6e4e8;
-  --color-border-strong: #dce7ea;
-  --color-accent: #35b8be;
+  --color-text: #111111;
+  --color-muted: #5f6b70;
+  --color-border: #cfd8dc;
+  --color-accent: #24c7c3;
   --color-accent-contrast: #ffffff;
-  --color-error: #c0392b;
   --color-focus: #005fcc;
-  color-scheme: light;
 }
 
-[data-theme='dark'] {
+[data-theme="dark"] {
   --color-bg: #111827;
   --color-surface: #1f2937;
-  --color-surface-muted: #172231;
   --color-text: #f9fafb;
-  --color-heading: #ffffff;
   --color-muted: #cbd5e1;
   --color-border: #475569;
-  --color-border-strong: #334155;
   --color-accent: #38d8d3;
   --color-accent-contrast: #062525;
-  --color-error: #fca5a5;
   --color-focus: #93c5fd;
-  color-scheme: dark;
 }
 
 body {
-  margin: 0;
-  background: var(--color-bg);
+  min-height: 100vh;
+  background-color: var(--color-bg);
   color: var(--color-text);
+}
+
+#root {
+  min-height: 100vh;
+  background-color: var(--color-bg);
 }
 
 a {
@@ -48,7 +51,13 @@ a {
 button,
 input,
 textarea {
-  font: inherit;
+  font-family: inherit;
+}
+
+button {
+  border: none;
+  background: none;
+  cursor: pointer;
 }
 
 button:focus-visible,

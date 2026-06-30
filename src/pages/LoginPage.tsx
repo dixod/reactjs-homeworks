@@ -1,23 +1,32 @@
-import { useState, type FormEvent } from 'react';
+import { useContext, type FormEvent } from 'react';
+import { useState } from 'react';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
+import { LanguageContext } from '../context/LanguageContext';
 import { auth } from '../firebase';
-import { useAppDispatch } from '../store/hooks';
 import { setUser } from '../store/authSlice';
+import { useAppDispatch } from '../store/hooks';
 
 export default function LoginPage() {
+  const languageContext = useContext(LanguageContext);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
+  if (!languageContext) {
+    return null;
+  }
+
+  const { t } = languageContext;
+
   const handleLogin = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError('');
 
     if (!auth) {
-      setError('Firebase config is missing.');
+      setError(t('login.firebaseMissing'));
       return;
     }
 
@@ -26,7 +35,7 @@ export default function LoginPage() {
       dispatch(setUser({ email: userCredential.user.email, uid: userCredential.user.uid }));
       navigate('/');
     } catch (authError) {
-      setError(authError instanceof Error ? authError.message : 'Failed to log in.');
+      setError(authError instanceof Error ? authError.message : t('login.loginFailed'));
     }
   };
 
@@ -34,7 +43,7 @@ export default function LoginPage() {
     setError('');
 
     if (!auth) {
-      setError('Firebase config is missing.');
+      setError(t('login.firebaseMissing'));
       return;
     }
 
@@ -43,50 +52,50 @@ export default function LoginPage() {
       dispatch(setUser({ email: userCredential.user.email, uid: userCredential.user.uid }));
       navigate('/');
     } catch (authError) {
-      setError(authError instanceof Error ? authError.message : 'Failed to register.');
+      setError(authError instanceof Error ? authError.message : t('login.registerFailed'));
     }
   };
 
   return (
-    <div className="page">
-      <main className="login">
-        <h1 className="login-title">Login</h1>
-        <form className="login-form" onSubmit={handleLogin}>
-          <label className="login-field">
-            <span>Email</span>
-            <input
-              type="email"
-              name="email"
-              placeholder="Enter your email"
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-              required
-            />
-          </label>
+    <main className="login">
+      <h1 className="login-title">{t('login.title')}</h1>
+      <form className="login-form" onSubmit={handleLogin}>
+        <label className="login-field">
+          <span>{t('login.email')}</span>
+          <input
+            type="email"
+            name="email"
+            placeholder={t('login.emailPlaceholder')}
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
+            required
+          />
+        </label>
 
-          <label className="login-field">
-            <span>Password</span>
-            <input
-              type="password"
-              name="password"
-              placeholder="Enter your password"
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              required
-            />
-          </label>
+        <label className="login-field">
+          <span>{t('login.password')}</span>
+          <input
+            type="password"
+            name="password"
+            placeholder={t('login.passwordPlaceholder')}
+            value={password}
+            onChange={(event) => setPassword(event.target.value)}
+            required
+          />
+        </label>
 
+        <div className="login-actions">
           <button className="primary-btn" type="submit">
-            Log in
+            {t('login.submit')}
           </button>
 
-          <button className="login-switch" type="button" onClick={handleRegister}>
-            Register
+          <button className="secondary-btn" type="button" onClick={handleRegister}>
+            {t('login.register')}
           </button>
+        </div>
 
-          {error ? <p className="login-error">{error}</p> : null}
-        </form>
-      </main>
-    </div>
+        {error ? <p className="login-error">{error}</p> : null}
+      </form>
+    </main>
   );
 }

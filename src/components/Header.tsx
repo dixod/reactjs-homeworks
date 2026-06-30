@@ -1,21 +1,32 @@
-import { Link, NavLink } from 'react-router-dom';
+import { useContext } from 'react';
 import { signOut } from 'firebase/auth';
-import logo from '../assets/Logo.svg';
-import { useTheme } from '../context/ThemeContext';
+import { Link, NavLink } from 'react-router-dom';
+import logoImg from '../assets/Logo.png';
+import LanguageDropdown from './LanguageDropdown';
+import { LanguageContext } from '../context/LanguageContext';
+import { ThemeContext } from '../context/ThemeContext';
 import { auth } from '../firebase';
 import { clearUser } from '../store/authSlice';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 
-type HeaderProps = {
-  cartCount: number;
-  ordersCount: number;
-};
-
-export default function Header({ cartCount, ordersCount }: HeaderProps) {
+export default function Header() {
+  const themeContext = useContext(ThemeContext);
+  const languageContext = useContext(LanguageContext);
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.auth.user);
-  const { theme, toggleTheme } = useTheme();
-  const userName = user?.email?.split('@')[0];
+  const cartCount = useAppSelector((state) =>
+    state.cart.items.reduce((total, item) => total + item.quantity, 0),
+  );
+
+  if (!themeContext || !languageContext) {
+    return null;
+  }
+
+  const { theme, toggleTheme } = themeContext;
+  const { t } = languageContext;
+  const userName = user?.email?.split('@')[0] ?? t('header.user');
+  const getNavLinkClass = ({ isActive }: { isActive: boolean }) =>
+    `nav-link ${isActive ? 'nav-link--active' : ''}`.trim();
 
   const handleLogout = async () => {
     if (auth) {
@@ -28,48 +39,45 @@ export default function Header({ cartCount, ordersCount }: HeaderProps) {
   return (
     <header className="header">
       <Link className="brand" to="/">
-        <img src={logo} alt="Food logo" className="brand-logo" />
+        <img className="brand-icon" src={logoImg} alt={t('header.logoAlt')} />
       </Link>
 
-      <nav className="nav" aria-label="Main navigation">
-        <NavLink className="nav-item" to="/">
-          Home
+      <nav className="nav">
+        <NavLink className={getNavLinkClass} to="/" end>
+          {t('header.home')}
         </NavLink>
-        <NavLink className="nav-item nav-item--active" to="/">
-          Menu
+        <NavLink className={getNavLinkClass} to="/menu">
+          {t('header.menu')}
         </NavLink>
-        <NavLink className="nav-item" to="/">
-          Company
+        <NavLink className={getNavLinkClass} to="/company">
+          {t('header.company')}
         </NavLink>
         {user ? (
           <>
-            <span className="nav-item">{userName}</span>
-            <button className="login-switch" type="button" onClick={handleLogout}>
-              Logout
+            <span className="nav-user">{userName}</span>
+            <button className="logout-btn" type="button" onClick={handleLogout}>
+              {t('header.logout')}
             </button>
           </>
         ) : (
-          <NavLink className="nav-item" to="/login">
-            Login
+          <NavLink className={getNavLinkClass} to="/login">
+            {t('header.login')}
           </NavLink>
         )}
       </nav>
+
+      <LanguageDropdown />
 
       <button
         className="theme-toggle"
         type="button"
         onClick={toggleTheme}
-        aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} theme`}
-        aria-pressed={theme === 'dark'}
+        aria-label={theme === 'light' ? t('header.switchToDark') : t('header.switchToLight')}
       >
-        {theme === 'light' ? 'Dark' : 'Light'}
+        {theme === 'light' ? t('header.dark') : t('header.light')}
       </button>
 
-      <Link
-        className="cart-btn"
-        to="/order"
-        aria-label={`Cart items: ${cartCount}. Loaded orders: ${ordersCount}`}
-      >
+      <Link className="cart-btn" to="/order" aria-label={t('header.order')}>
         <svg className="cart-icon" viewBox="0 0 24 24" aria-hidden="true">
           <circle cx="9" cy="20" r="1.6" />
           <circle cx="18" cy="20" r="1.6" />
