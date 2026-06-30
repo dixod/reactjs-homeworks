@@ -1,11 +1,11 @@
-import { useDispatch, useSelector } from 'react-redux';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { submitOrder } from '../store/orderSlice';
 
 export default function OrderPage() {
-  const dispatch = useDispatch();
-  const order = useSelector((state) => state.order);
-  const user = useSelector((state) => state.auth.user);
-  const cartCount = useSelector((state) => state.menu.cartCount);
+  const dispatch = useAppDispatch();
+  const order = useAppSelector((state) => state.order);
+  const user = useAppSelector((state) => state.auth.user);
+  const cartCount = useAppSelector((state) => state.menu.cartCount);
 
   const handlePlaceOrder = () => {
     dispatch(submitOrder());

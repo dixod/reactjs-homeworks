@@ -1,18 +1,18 @@
 import { useEffect, useMemo } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import CategoryBar from '../components/CategoryBar';
 import Footer from '../components/Footer';
 import Header from '../components/Header';
 import MealCard from '../components/MealCard';
 import { useFetch } from '../hooks/useFetch';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { addToCart, fetchMenu, selectCategory, showMore } from '../store/menuSlice';
 
 export default function HomePage() {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { request } = useFetch();
-  const { meals, orders, visibleCount, cartCount, loading, error, selectedCategory } = useSelector(
+  const { meals, orders, visibleCount, cartCount, loading, error, selectedCategory } = useAppSelector(
     (state) => state.menu,
   );
 
@@ -38,7 +38,7 @@ export default function HomePage() {
     dispatch(addToCart());
   };
 
-  const handleCategoryChange = (category) => {
+  const handleCategoryChange = (category: string) => {
     dispatch(selectCategory(category));
   };
 

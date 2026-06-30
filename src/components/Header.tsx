@@ -1,13 +1,18 @@
 import { Link, NavLink } from 'react-router-dom';
 import { signOut } from 'firebase/auth';
-import { useDispatch, useSelector } from 'react-redux';
 import logo from '../assets/Logo.svg';
 import { auth } from '../firebase';
 import { clearUser } from '../store/authSlice';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
 
-export default function Header({ cartCount, ordersCount }) {
-  const dispatch = useDispatch();
-  const user = useSelector((state) => state.auth.user);
+type HeaderProps = {
+  cartCount: number;
+  ordersCount: number;
+};
+
+export default function Header({ cartCount, ordersCount }: HeaderProps) {
+  const dispatch = useAppDispatch();
+  const user = useAppSelector((state) => state.auth.user);
   const userName = user?.email?.split('@')[0];
 
   const handleLogout = async () => {

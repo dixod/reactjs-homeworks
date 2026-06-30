@@ -1,16 +1,30 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice, type PayloadAction } from '@reduxjs/toolkit';
 import { getMeals } from '../api/mealsApi';
 import { getOrders } from '../api/ordersApi';
+import type { FetchRequest, Meal, Order } from '../types';
 
 const STEP = 6;
 
-export const fetchMenu = createAsyncThunk('menu/fetchMenu', async (request) => {
+export const fetchMenu = createAsyncThunk<{ meals: Meal[]; orders: Order[] }, FetchRequest>(
+  'menu/fetchMenu',
+  async (request) => {
   const [meals, orders] = await Promise.all([getMeals(request), getOrders(request)]);
 
   return { meals, orders };
-});
+  },
+);
 
-const initialState = {
+type MenuState = {
+  meals: Meal[];
+  orders: Order[];
+  visibleCount: number;
+  cartCount: number;
+  loading: boolean;
+  error: string;
+  selectedCategory: string | null;
+};
+
+const initialState: MenuState = {
   meals: [],
   orders: [],
   visibleCount: STEP,
@@ -27,7 +41,7 @@ const menuSlice = createSlice({
     addToCart(state) {
       state.cartCount += 1;
     },
-    selectCategory(state, action) {
+    selectCategory(state, action: PayloadAction<string>) {
       state.selectedCategory = action.payload === state.selectedCategory ? null : action.payload;
       state.visibleCount = STEP;
     },

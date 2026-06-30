@@ -2,10 +2,10 @@ import { useEffect } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from '../firebase';
 import { clearUser, finishLoading, setUser } from '../store/authSlice';
-import { useDispatch } from 'react-redux';
+import { useAppDispatch } from '../store/hooks';
 
 export default function AuthListener() {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     if (!auth) {
