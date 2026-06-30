@@ -1,6 +1,7 @@
 import { Link, NavLink } from 'react-router-dom';
 import { signOut } from 'firebase/auth';
 import logo from '../assets/Logo.svg';
+import { useTheme } from '../context/ThemeContext';
 import { auth } from '../firebase';
 import { clearUser } from '../store/authSlice';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
@@ -13,6 +14,7 @@ type HeaderProps = {
 export default function Header({ cartCount, ordersCount }: HeaderProps) {
   const dispatch = useAppDispatch();
   const user = useAppSelector((state) => state.auth.user);
+  const { theme, toggleTheme } = useTheme();
   const userName = user?.email?.split('@')[0];
 
   const handleLogout = async () => {
@@ -52,6 +54,16 @@ export default function Header({ cartCount, ordersCount }: HeaderProps) {
           </NavLink>
         )}
       </nav>
+
+      <button
+        className="theme-toggle"
+        type="button"
+        onClick={toggleTheme}
+        aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} theme`}
+        aria-pressed={theme === 'dark'}
+      >
+        {theme === 'light' ? 'Dark' : 'Light'}
+      </button>
 
       <Link
         className="cart-btn"
