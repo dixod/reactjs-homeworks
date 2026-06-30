@@ -1,22 +1,31 @@
+import { Link, NavLink } from 'react-router-dom';
 import logo from '../assets/Logo.svg';
 
 export default function Header({ cartCount, ordersCount }) {
   return (
     <header className="header">
-      <div className="brand">
+      <Link className="brand" to="/">
         <img src={logo} alt="Food logo" className="brand-logo" />
-      </div>
+      </Link>
 
       <nav className="nav" aria-label="Main navigation">
-        <span className="nav-item">Home</span>
-        <span className="nav-item nav-item--active">Menu</span>
-        <span className="nav-item">Company</span>
-        <span className="nav-item">Login</span>
+        <NavLink className="nav-item" to="/">
+          Home
+        </NavLink>
+        <NavLink className="nav-item nav-item--active" to="/">
+          Menu
+        </NavLink>
+        <NavLink className="nav-item" to="/">
+          Company
+        </NavLink>
+        <NavLink className="nav-item" to="/login">
+          Login
+        </NavLink>
       </nav>
 
-      <button
-        type="button"
+      <Link
         className="cart-btn"
+        to="/order"
         aria-label={`Cart items: ${cartCount}. Loaded orders: ${ordersCount}`}
       >
         <svg className="cart-icon" viewBox="0 0 24 24" aria-hidden="true">
@@ -25,7 +34,7 @@ export default function Header({ cartCount, ordersCount }) {
           <path d="M2 3h3l2.3 11.4a2 2 0 0 0 2 1.6h8.9a2 2 0 0 0 1.9-1.4L22 7H6" />
         </svg>
         <span className="cart-count">{cartCount}</span>
-      </button>
+      </Link>
     </header>
   );
 }
